@@ -2,4 +2,4 @@
 
 This repo is just for testing purposes
 
-* Test: _index/index.html
+* Test: staticrypt _site/index.html -p MY_LONG_PASSWORD -o index.html -d "_site/"
