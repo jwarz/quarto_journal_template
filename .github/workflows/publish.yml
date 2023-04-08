@@ -17,17 +17,29 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render Quarto Project
-        uses: quarto-dev/quarto-actions/render@v2
-
-      - run: npm i -g staticrypt
-
-      - name: Publish to GitHub Pages (and render)
+      - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
           target: gh-pages
-          render: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: find . -type f -name "*.html" -exec staticrypt {} MY_LONG_PASSWORD \;   
+      - name: Install staticrypt
+        run: sudo npm install -g staticrypt
+      
+      - name: Encrypt index
+        run: staticrypt index.html -p MY_LONG_PASSWORD -o index.html
+      
+      - name: Commit files
+        run: |
+          git config --global user.name "jwarz"
+          git config --global user.email "joschka.schwarz@tuhh.de"
+          git add .
+          git commit -m "encrypted files"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
