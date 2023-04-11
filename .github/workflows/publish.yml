@@ -17,9 +17,36 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render and Publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Render Quarto Project
+        uses: quarto-dev/quarto-actions/render@v2
+
+      - name: Install staticrypt
+        run: sudo npm install -g staticrypt
+
+      - name: Check out repository
+        uses: actions/checkout@v3
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ref: gh-pages
+        
+      - name: Encrypt index
+        run: staticrypt index.html -p MY_LONG_PASSWORD -o index.html -d "./"
+        
+      - name: Commit files
+        run: |
+          git config --global user.name "jwarz"
+          git config --global user.email "joschka.schwarz@tuhh.de"
+          git add .
+          git commit -m "encrypted files"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+          force: true
+          
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
