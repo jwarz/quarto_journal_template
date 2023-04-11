@@ -2,4 +2,4 @@
 
 This repo is just for testing purposes
 
-* Test: workflow in each branch
+* Test: workflow in one branch
