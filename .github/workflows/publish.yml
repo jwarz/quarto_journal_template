@@ -23,28 +23,3 @@ jobs:
           target: gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Checkout gh-pages
-        uses: actions/checkout@v3
-        with:
-          ref: gh-pages
-
-      - name: Install staticrypt
-        run: sudo npm install -g staticrypt
-        
-      - name: Encrypt index
-        run: staticrypt index.html -p MY_LONG_PASSWORD -o index.html -d "./"
-        
-      - name: Commit files
-        run: |
-          git config --global user.name "jwarz"
-          git config --global user.email "joschka.schwarz@tuhh.de"
-          git add .
-          git commit -m "encrypted files"
-      
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: gh-pages
-          force: true
