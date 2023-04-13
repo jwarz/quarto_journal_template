@@ -52,11 +52,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: github-pages
-      url: ${{steps.deployment.outputs.page_url}}
+    permissions:
+      contents: write
+
+    #environment:
+    #  name: github-pages
+    #  url: ${{steps.deployment.outputs.page_url}}
       
     steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
       - name: Deploy to Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
